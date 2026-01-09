@@ -1,0 +1,1 @@
+#capa intermedia para conectar Django con los simuladores
