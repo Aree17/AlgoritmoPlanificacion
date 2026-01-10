@@ -1,0 +1,56 @@
+<h2>Procesos Guardados</h2>
+
+<table border="1">
+<tr>
+    <th>Nombre</th>
+    <th>Llegada</th>
+    <th>Ráfaga CPU</th>
+    <th>Operaciones E/S</th>
+    <th>Acción</th>
+</tr>
+
+{% for p in procesos %}
+<tr>
+    <td>{{ p.nombre }}</td>
+    <td>{{ p.tiempo_llegada }}</td>
+    <td>{{ p.rafaga_cpu }}</td>
+    <td>
+        {% if p.es and p.es|length > 0 %}
+            {% for op in p.es %}
+                {% if op|length == 2 %}
+                    (E/S {{ op.0 }} → Duración {{ op.1 }} ms)<br>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            Ninguna
+        {% endif %}
+    </td>
+    <td>
+        <a href="{% url 'eliminar_proceso' p.id %}"
+           onclick="return confirm('¿Eliminar proceso {{ p.nombre }}?');">
+           Eliminar
+        </a>
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="5" align="center">No hay procesos registrados</td>
+</tr>
+{% endfor %}
+</table>
+
+<br>
+
+<form action="{% url 'ingresar' %}" method="get" style="display:inline; margin-right:12px;">
+    <button type="submit">+ Agregar proceso</button>
+</form>
+
+<form method="post" action="{% url 'eliminar_todos_procesos' %}"
+      onsubmit="return confirm('¿Eliminar todos los procesos?');">
+    {% csrf_token %}
+    <button type="submit">Eliminar todos</button>
+</form>
+
+<a href="{% url 'simular' %}">
+    <button>▶ Ejecutar Simulación SJF</button>
+</a>

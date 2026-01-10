@@ -1,0 +1,41 @@
+<h2>Gantt CPU</h2>
+<table border="1">
+<tr><th>Proceso</th><th>Inicio</th><th>Fin</th></tr>
+{% for g in gantt %}
+<tr>
+<td>{{ g.0 }}</td>
+<td>{{ g.1 }}</td>
+<td>{{ g.2 }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<h2>CPL (Cola de Procesos Listos - Despacho)</h2>
+<p>{{ cpl|join:" → " }}</p>
+
+<h2>Cola de Operaciones E/S</h2>
+<p>{{ ces|join:" → " }}</p>
+
+<h2>Métricas</h2>
+<table border="1">
+<tr><th>Proceso</th><th>TEP</th><th>TEjeP</th></tr>
+{% for c in completados %}
+<tr>
+<td>{{ c.proceso }}</td>
+<td>{{ c.TEP }}</td>
+<td>{{ c.TEjeP }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<h3>Promedios</h3>
+<table border="1">
+<tr>
+<th>Promedio TEP</th>
+<th>Promedio TEjeP</th>
+</tr>
+<tr>
+<td>{{ prom_tep|floatformat:2 }}</td>
+<td>{{ prom_teje|floatformat:2 }}</td>
+</tr>
+</table>

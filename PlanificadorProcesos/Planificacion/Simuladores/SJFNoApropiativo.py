@@ -1,1 +1,0 @@
-#Aquí va la lógica pura, sin Django
