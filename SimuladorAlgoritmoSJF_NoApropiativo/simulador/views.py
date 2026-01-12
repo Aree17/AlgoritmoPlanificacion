@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ProcesoForm
 from .models import Proceso
 from .sjf import sjf_simular
-
+import json
 
 def ingresar_proceso(request):
     if request.method == 'POST':
@@ -31,13 +31,18 @@ def eliminar_todos_procesos(request):
 def simular(request):
     procesos = list(Proceso.objects.all())
 
-    gantt, cpl, ces, resultados, prom_tep, prom_teje = sjf_simular(procesos)
+    gantt, cpl, ces, completados, prom_tep, prom_teje = sjf_simular(procesos)
 
     return render(request, "resultado.html", {
         "gantt": gantt,
         "cpl": cpl,
         "ces": ces,
-        "completados": resultados,
+        "completados": completados,
         "prom_tep": prom_tep,
-        "prom_teje": prom_teje
+        "prom_teje": prom_teje,
+
+        # para JS
+        "gantt_js": json.dumps(gantt),
+        "cpl_js": json.dumps(cpl),
+        "ces_js": json.dumps(ces),
     })

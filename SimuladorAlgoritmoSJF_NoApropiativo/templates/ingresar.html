@@ -1,7 +1,28 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ingresar Proceso</title>
+    <link rel="stylesheet" href="{% static 'css/ingresar.css' %}">
+</head>
+<body>
+
+<div class="form-container fade-in">
+
 <h2>Ingresar Proceso</h2>
-<form method="post">
+
+<form id="formProceso" method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button>Guardar</button>
+    <button type="submit">Guardar Proceso</button>
 </form>
-<a href="/lista/">Ver procesos</a>
+
+<a class="back-link" href="/lista/">⬅ Ver procesos</a>
+
+</div>
+
+<script src="{% static 'js/ingresar.js' %}"></script>
+
+</body>
+</html>

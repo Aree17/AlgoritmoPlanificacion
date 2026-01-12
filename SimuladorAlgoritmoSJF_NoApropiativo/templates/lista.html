@@ -1,6 +1,19 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Procesos Guardados</title>
+    <link rel="stylesheet" href="{% static 'css/lista.css' %}">
+</head>
+<body>
+
+<div class="container fade-in">
+
 <h2>Procesos Guardados</h2>
 
-<table border="1">
+<table>
+<thead>
 <tr>
     <th>Nombre</th>
     <th>Llegada</th>
@@ -8,49 +21,61 @@
     <th>Operaciones E/S</th>
     <th>Acción</th>
 </tr>
+</thead>
 
+<tbody>
 {% for p in procesos %}
 <tr>
-    <td>{{ p.nombre }}</td>
+    <td><b>{{ p.nombre }}</b></td>
     <td>{{ p.tiempo_llegada }}</td>
     <td>{{ p.rafaga_cpu }}</td>
     <td>
         {% if p.es and p.es|length > 0 %}
             {% for op in p.es %}
                 {% if op|length == 2 %}
-                    (E/S {{ op.0 }} → Duración {{ op.1 }} ms)<br>
+                    🔁 E/S {{ op.0 }} → {{ op.1 }} ms<br>
                 {% endif %}
             {% endfor %}
         {% else %}
-            Ninguna
+            <i>Ninguna</i>
         {% endif %}
     </td>
     <td>
         <a href="{% url 'eliminar_proceso' p.id %}"
-           onclick="return confirm('¿Eliminar proceso {{ p.nombre }}?');">
-           Eliminar
+           onclick="return confirmar('{{ p.nombre }}');">
+           <button class="btn btn-delete">Eliminar</button>
         </a>
     </td>
 </tr>
 {% empty %}
 <tr>
-    <td colspan="5" align="center">No hay procesos registrados</td>
+    <td colspan="5">No hay procesos registrados</td>
 </tr>
 {% endfor %}
+</tbody>
 </table>
 
-<br>
+<div class="actions">
 
-<form action="{% url 'ingresar' %}" method="get" style="display:inline; margin-right:12px;">
-    <button type="submit">+ Agregar proceso</button>
+<form action="{% url 'ingresar' %}" method="get" style="display:inline;">
+    <button class="btn btn-add" type="submit">➕ Agregar proceso</button>
 </form>
 
 <form method="post" action="{% url 'eliminar_todos_procesos' %}"
-      onsubmit="return confirm('¿Eliminar todos los procesos?');">
+      style="display:inline;"
+      onsubmit="return confirmarTodos();">
     {% csrf_token %}
-    <button type="submit">Eliminar todos</button>
+    <button class="btn btn-delete" type="submit">🗑 Eliminar todos</button>
 </form>
 
 <a href="{% url 'simular' %}">
-    <button>▶ Ejecutar Simulación SJF</button>
+    <button class="btn btn-run">▶ Ejecutar Simulación SJF No Apropiativo</button>
 </a>
+
+</div>
+</div>
+
+<script src="{% static 'js/lista.js' %}"></script>
+
+</body>
+</html>

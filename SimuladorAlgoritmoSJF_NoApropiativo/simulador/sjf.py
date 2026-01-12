@@ -2,7 +2,6 @@ def sjf_simular(procesos):
 
     tiempo = 0
     gantt = []
-
     pendientes = procesos.copy()
     listos = []
     en_es = []
@@ -25,13 +24,11 @@ def sjf_simular(procesos):
 
     while pendientes or listos or en_es:
 
-        # llegadas
         for p in pendientes[:]:
             if p.tiempo_llegada <= tiempo:
                 listos.append(p)
                 pendientes.remove(p)
 
-        # retorno E/S
         for e in en_es[:]:
             if e["fin"] <= tiempo:
                 listos.append(e["proceso"])
@@ -51,10 +48,8 @@ def sjf_simular(procesos):
             restante = info["rafaga"] - info["ejecutado"]
             inicio = tiempo
 
-            # próxima E/S
             if info["es_index"] < len(info["es"]) and len(info["es"][info["es_index"]]) == 2:
-                proxima_es = info["es"][info["es_index"]][0]
-                dur_es = info["es"][info["es_index"]][1]
+                proxima_es, dur_es = info["es"][info["es_index"]]
             else:
                 proxima_es = None
                 dur_es = None
@@ -70,7 +65,6 @@ def sjf_simular(procesos):
             info["ejecutado"] += ejecutar
             tiempo = fin
 
-            # entra a E/S
             if proxima_es is not None and info["ejecutado"] == proxima_es:
                 info["es_index"] += 1
                 en_es.append({
@@ -89,7 +83,6 @@ def sjf_simular(procesos):
         else:
             tiempo += 1
 
-    # métricas
     resultados = []
     total_tep = 0
     total_teje = 0
