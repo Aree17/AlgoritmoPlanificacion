@@ -1,43 +1,64 @@
 let paso = 0;
 let timer = null;
 
-function mostrarPaso() {
+function mostrarPaso(){
+
+    if(paso >= gantt.length){
+        detener();
+        document.getElementById("final").style.display = "block";
+        return;
+    }
 
     let g = gantt[paso];
 
-    document.getElementById("cpu").innerText = g[0];
-    document.getElementById("inicio").innerText = g[1];
-    document.getElementById("fin").innerText = g[2];
+    // Historial CPU
+    let cpuBox = document.getElementById("cpuBox");
+    let cpuDiv = document.createElement("div");
+    cpuDiv.className = "proc";
+    cpuDiv.innerHTML = `${g[0]}<br>${g[1]} → ${g[2]}`;
+    cpuBox.appendChild(cpuDiv);
 
-    document.getElementById("cpl").innerText =
-        cpl.slice(0,paso+1).join(" → ");
-
-    document.getElementById("ces").innerText =
-        ces.slice(0,paso+1).join(" → ");
-
+    // Cola CPL
+    actualizarCola("cplBox", cpl.slice(0, paso+1));
+    // Cola O E/S
+    actualizarCola("cesBox", ces.slice(0, paso+1));
     paso++;
-
-    if (paso >= gantt.length) {
-        detener();
-        document.getElementById("final").style.display = "block";
-    }
 }
 
-function siguiente() {
-    if (paso < gantt.length) {
-        mostrarPaso();
-    }
+function actualizarCola(id, lista){
+    let box = document.getElementById(id);
+    box.innerHTML = "";
+
+    lista.forEach(p => {
+        let d = document.createElement("div");
+        d.className = "proc";
+        d.innerText = p;
+        box.appendChild(d);
+    });
 }
 
-function auto() {
-    if (timer == null) {
+function siguiente(){
+    mostrarPaso();
+}
+
+function auto(){
+    if(timer == null){
         timer = setInterval(mostrarPaso, 1200);
     }
 }
 
-function detener() {
-    if (timer != null) {
+function detener(){
+    if(timer != null){
         clearInterval(timer);
         timer = null;
     }
+}
+
+function reiniciar(){
+    detener();
+    paso = 0;
+    document.getElementById("cpuBox").innerHTML = "";
+    document.getElementById("cplBox").innerHTML = "";
+    document.getElementById("cesBox").innerHTML = "";
+    document.getElementById("final").style.display = "none";
 }

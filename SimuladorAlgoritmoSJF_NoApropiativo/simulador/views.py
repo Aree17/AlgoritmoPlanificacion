@@ -41,7 +41,6 @@ def simular(request):
         "prom_tep": prom_tep,
         "prom_teje": prom_teje,
 
-        # para JS
         "gantt_js": json.dumps(gantt),
         "cpl_js": json.dumps(cpl),
         "ces_js": json.dumps(ces),

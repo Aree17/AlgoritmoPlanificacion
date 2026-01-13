@@ -33,7 +33,7 @@
         {% if p.es and p.es|length > 0 %}
             {% for op in p.es %}
                 {% if op|length == 2 %}
-                    🔁 E/S {{ op.0 }} → {{ op.1 }} ms<br>
+                    E/S {{ op.0 }} → {{ op.1 }} ms<br>
                 {% endif %}
             {% endfor %}
         {% else %}
@@ -58,18 +58,18 @@
 <div class="actions">
 
 <form action="{% url 'ingresar' %}" method="get" style="display:inline;">
-    <button class="btn btn-add" type="submit">➕ Agregar proceso</button>
+    <button class="btn btn-add" type="submit">Agregar proceso</button>
 </form>
 
 <form method="post" action="{% url 'eliminar_todos_procesos' %}"
       style="display:inline;"
       onsubmit="return confirmarTodos();">
     {% csrf_token %}
-    <button class="btn btn-delete" type="submit">🗑 Eliminar todos</button>
+    <button class="btn btn-delete" type="submit">Eliminar todos</button>
 </form>
 
 <a href="{% url 'simular' %}">
-    <button class="btn btn-run">▶ Ejecutar Simulación SJF No Apropiativo</button>
+    <button class="btn btn-run">Ejecutar Simulación</button>
 </a>
 
 </div>

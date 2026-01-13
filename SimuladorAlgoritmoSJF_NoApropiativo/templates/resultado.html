@@ -1,6 +1,6 @@
 {% load static %}
-
 <link rel="stylesheet" href="{% static 'css/resultado.css' %}">
+<link rel="stylesheet" href="{% static 'css/simulacion_visual.css' %}">
 
 <script>
 const gantt = {{ gantt_js|safe }};
@@ -8,28 +8,40 @@ const cpl = {{ cpl_js|safe }};
 const ces = {{ ces_js|safe }};
 </script>
 
-<h2>Simulación Paso a Paso</h2>
+<h2>Simulación Algoritmo SFJ No Apropiativo</h2>
 
-<div class="step-box">
-    <p><b>CPU:</b> <span id="cpu"></span></p>
-    <p><b>Inicio:</b> <span id="inicio"></span></p>
-    <p><b>Fin:</b> <span id="fin"></span></p>
+<div class="panel">
+
+<div class="box cpu">
+    <h3>CPU</h3>
+    <div id="cpuBox"></div>
 </div>
 
-<div class="step-box">
-    <p><b>CPL:</b> <span id="cpl"></span></p>
+<div class="box">
+    <h3>CPL</h3>
+    <div id="cplBox"></div>
 </div>
 
-<div class="step-box">
-    <p><b>Cola E/S:</b> <span id="ces"></span></p>
+<div class="box">
+    <h3>Cola E/S</h3>
+    <div id="cesBox"></div>
 </div>
 
-<div style="text-align:center">
-    <button onclick="siguiente()">▶ Siguiente paso</button>
-    <button onclick="auto()">▶▶ Automático</button>
 </div>
 
-<div id="final" class="final-box">
+<div class="controls">
+    <button class="btn" onclick="siguiente()">Siguiente paso</button>
+    <button class="btn" onclick="auto()">Automático</button>
+    <button class="btn" onclick="reiniciar()">Reiniciar Simulación</button>
+</div>
+
+<div class="final-actions">
+<a href="{% url 'ingresar' %}"><button class="btn btn-add">Agregar proceso</button></a>
+<a href="{% url 'lista_procesos' %}"><button class="btn">Ver procesos</button></a>
+</div>
+
+<!--RESULTADOS FINALES-->
+<div id="final" class="final-box" style="display:none;">
 
 <h2>Gantt CPU</h2>
 <table>
@@ -69,7 +81,5 @@ const ces = {{ ces_js|safe }};
 <td>{{ prom_teje|floatformat:2 }}</td>
 </tr>
 </table>
-
 </div>
-
 <script src="{% static 'js/resultado.js' %}"></script>
