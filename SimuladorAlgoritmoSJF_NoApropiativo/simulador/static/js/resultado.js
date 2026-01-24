@@ -1,39 +1,137 @@
 let paso = 0;
 let timer = null;
+let cesIndex = 0;
 
-function mostrarPaso(){
+// Duraciones (más lento para ver)
+const DURACION_ANIM = 1200;
+const ESPERA_AUTO = 1600;
 
-    if(paso >= gantt.length){
-        detener();
-        document.getElementById("final").style.display = "block";
-        return;
-    }
+// Evita que el automático dispare pasos antes de terminar la animación
+let bloqueado = false;
 
-    let g = gantt[paso];
-
-    // Historial CPU
-    let cpuBox = document.getElementById("cpuBox");
-    let cpuDiv = document.createElement("div");
-    cpuDiv.className = "proc";
-    cpuDiv.innerHTML = `${g[0]}<br>${g[1]} → ${g[2]}`;
-    cpuBox.appendChild(cpuDiv);
-
-    // Cola CPL
-    actualizarCola("cplBox", cpl.slice(0, paso+1));
-    // Cola O E/S
-    actualizarCola("cesBox", ces.slice(0, paso+1));
-    paso++;
-}
-
-function actualizarCola(id, lista){
+// Render CPL / CES como listas completas
+function renderCola(id, lista){
     let box = document.getElementById(id);
     box.innerHTML = "";
 
-    lista.forEach(p => {
+    lista.forEach(p=>{
         let d = document.createElement("div");
         d.className = "proc";
         d.innerText = p;
         box.appendChild(d);
+    });
+}
+
+// Historial CPU acumulado
+function agregarCPU(nombre, ini, fin){
+    let cpuBox = document.getElementById("cpuBox");
+    let cpuDiv = document.createElement("div");
+    cpuDiv.className = "proc";
+    cpuDiv.innerHTML = `${nombre}<br>${ini} → ${fin}`;
+    cpuBox.appendChild(cpuDiv);
+}
+
+// Animación real: toma el último bloque del contenedor origen y lo "vuela" al destino
+function animarMovimiento(nombre, fromId, toId, callback){
+    const fromBox = document.getElementById(fromId);
+    const toBox = document.getElementById(toId);
+
+    if(!fromBox || !toBox){
+        callback();
+        return;
+    }
+
+    const items = fromBox.querySelectorAll(".proc");
+
+    if(items.length === 0){
+        callback();
+        return;
+    }
+
+    // El último elemento visible en esa cola
+    const elem = items[items.length - 1];
+    elem.classList.add("moving");
+
+    // Clonar para volar
+    const clone = elem.cloneNode(true);
+    clone.className = "flying-proc";
+    clone.innerText = nombre;
+
+    const start = elem.getBoundingClientRect();
+    const end = toBox.getBoundingClientRect();
+
+    clone.style.left = start.left + "px";
+    clone.style.top = start.top + "px";
+
+    document.body.appendChild(clone);
+
+    requestAnimationFrame(()=>{
+        const dx = (end.left + 40) - start.left;
+        const dy = (end.top + 60) - start.top;
+
+        clone.style.transform = `translate(${dx}px, ${dy}px) scale(1.15)`;
+        clone.style.opacity = "0";
+    });
+
+    setTimeout(()=>{
+        clone.remove();
+        elem.classList.remove("moving");
+        callback();
+    }, DURACION_ANIM + 50);
+}
+
+function mostrarPaso(){
+    if(bloqueado) return;
+    bloqueado = true;
+
+    if(paso >= gantt.length){
+        detener();
+        document.getElementById("final").style.display = "block";
+        bloqueado = false;
+        return;
+    }
+
+    const g = gantt[paso];
+    const procesoActual = g[0];
+
+    // ===== CPL actual en este paso (cola completa hasta ahora) =====
+    const cplActual = cpl.slice(0, paso + 1);
+    renderCola("cplBox", cplActual);
+
+    // ===== Animación CPL → CPU =====
+    animarMovimiento(procesoActual, "cplBox", "cpuBox", ()=>{
+
+        // aterriza en CPU: agrego al historial
+        agregarCPU(g[0], g[1], g[2]);
+
+        // ¿entra a E/S en este paso?
+        const entraES = (cesIndex < ces.length && ces[cesIndex] === procesoActual);
+
+        if(entraES){
+
+            // pre-render CES para que exista donde aterrizar
+            const cesPrev = ces.slice(0, cesIndex + 1);
+            renderCola("cesBox", cesPrev);
+
+            // ===== Animación CPU → E/S =====
+            animarMovimiento(procesoActual, "cpuBox", "cesBox", ()=>{
+                cesIndex++;
+
+                const cesActual = ces.slice(0, cesIndex);
+                renderCola("cesBox", cesActual);
+
+                paso++;
+                bloqueado = false;
+            });
+
+        } else {
+            // solo render CES actual
+            const cesActual = ces.slice(0, cesIndex);
+            renderCola("cesBox", cesActual);
+
+            paso++;
+            bloqueado = false;
+        }
     });
 }
 
@@ -43,7 +141,11 @@ function siguiente(){
 
 function auto(){
     if(timer == null){
-        timer = setInterval(mostrarPaso, 1200);
+        timer = setInterval(()=>{
+            if(!bloqueado){
+                mostrarPaso();
+            }
+        }, ESPERA_AUTO);
     }
 }
 
@@ -57,6 +159,9 @@ function detener(){
 function reiniciar(){
     detener();
     paso = 0;
+    cesIndex = 0;
+    bloqueado = false;
+
     document.getElementById("cpuBox").innerHTML = "";
     document.getElementById("cplBox").innerHTML = "";
     document.getElementById("cesBox").innerHTML = "";

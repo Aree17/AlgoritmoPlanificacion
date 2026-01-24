@@ -6,10 +6,10 @@
 }
 
 .box{
-    width:220px;
-    min-height:200px;
+    width:260px;
+    min-height:240px;
     border:2px solid #1a8cff;
-    border-radius:10px;
+    border-radius:12px;
     padding:10px;
     background:#f7faff;
     box-shadow:0 4px 10px rgba(0,0,0,0.15);
@@ -27,12 +27,19 @@
 .proc{
     background:#1a8cff;
     color:white;
-    padding:6px;
-    margin:5px 0;
-    border-radius:6px;
+    padding:8px;
+    margin:6px 0;
+    border-radius:10px;
     text-align:center;
     font-weight:bold;
+    box-shadow:0 2px 6px rgba(0,0,0,0.2);
     animation:fade 0.4s ease;
+    transition: opacity 0.3s ease;
+}
+
+.proc.moving{
+    opacity:0.25;
+    filter: blur(0.2px);
 }
 
 @keyframes fade{
@@ -61,4 +68,33 @@
     background:#0066cc;
     transform:scale(1.05);
     transition:0.2s;
+}
+
+/* ANIMACIÓN PROCESO VOLANDO ENTRE COLAS */
+.flying-proc{
+    position: fixed;
+    z-index: 9999;
+    background: #ff9933;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 14px 24px rgba(0,0,0,0.45);
+    pointer-events: none;
+
+    transition: transform 1.2s cubic-bezier(.2,.9,.2,1), opacity 1.2s ease;
+    opacity: 1;
+}
+
+.btn-run {
+    background:#2ecc71;
+    color:white;
+    font-weight:bold;
+}
+
+.btn-list {
+    background: #cc922e;
+    color:white;
+    font-weight:bold;
 }
