@@ -7,16 +7,40 @@ const gantt = {{ gantt_js|safe }};
 const cpl = {{ cpl_js|safe }};
 const ces = {{ ces_js|safe }};
 </script>
-
 <h2>Simulación Algoritmo SFJ No Apropiativo</h2>
 
 <div class="panel">
 
-<div class="box cpu">
-    <h3>CPU</h3>
-    <div id="cpuBox"></div>
-</div>
-
+<div class="tabla-procesos">
+   <h3>Tabla de procesos</h3>
+        <table>
+            <tr>
+                <th>Proceso</th>
+                <th>Llegada</th>
+                <th>RafagaCPU</th>
+                <th>0E/S</th>
+            </tr>
+            {% for p in procesos %}
+            <tr>
+                <td>{{p.nombre }}</td>
+                <td>{{ p.tiempo_llegada }}</td>
+                <td>{{ p.rafaga_cpu }}</td>
+                <td>
+                   {% if p.es and p.es|length > 0 %}
+                      {% for op in p.es %}
+                         {% if op|length == 2 %}
+                             E/S {{ op.0 }} → {{ op.1 }} ms<br>
+                         {% endif %}
+                      {% endfor %}
+                   {% else %}
+                    <i></i>
+                   {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+<div class = "contenido">
 <div class="box">
     <h3>CPL</h3>
     <div id="cplBox"></div>
@@ -26,20 +50,21 @@ const ces = {{ ces_js|safe }};
     <h3>Cola E/S</h3>
     <div id="cesBox"></div>
 </div>
-
+<div class="box cpu">
+    <h3>CPU</h3>
+    <div id="cpuBox"></div>
 </div>
-
+</div>
+</div>
 <div class="controls">
     <button class="btn" onclick="siguiente()">Siguiente paso</button>
     <button class="btn" onclick="auto()">Automático</button>
     <button class="btn" onclick="reiniciar()">Reiniciar Simulación</button>
 </div>
-
 <div class="final-actions">
 <a href="{% url 'ingresar' %}"><button class="btn btn-run">Agregar proceso</button></a>
 <a href="{% url 'lista_procesos' %}"><button class="btn btn-list">Ver lista de procesos</button></a>
 </div>
-
 <!--RESULTADOS FINALES-->
 <div id="final" class="final-box" style="display:none;">
 

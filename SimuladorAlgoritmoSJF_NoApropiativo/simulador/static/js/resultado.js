@@ -1,27 +1,38 @@
 let paso = 0;
 let timer = null;
 let cesIndex = 0;
+let cesActivos = [];
+
 
 // Duraciones (más lento para ver)
-const DURACION_ANIM = 1200;
-const ESPERA_AUTO = 1600;
+const DURACION_ANIM = 1200;//1200
+const ESPERA_AUTO = 1600; //1600
 
 // Evita que el automático dispare pasos antes de terminar la animación
 let bloqueado = false;
 
 // Render CPL / CES como listas completas
-function renderCola(id, lista){
+function renderCola(id, lista, bloqueados = []){
     let box = document.getElementById(id);
     box.innerHTML = "";
 
     lista.forEach(p=>{
         let d = document.createElement("div");
-        d.className = "proc";
         d.innerText = p;
+
+        if (id === "cesBox") {
+            d.className = "proc-es";
+        }
+        else if (id === "cplBox" && bloqueados.includes(p)) {
+            d.className = "proc-es";
+        }
+        else {
+            d.className = "proc";
+        }
+
         box.appendChild(d);
     });
 }
-
 // Historial CPU acumulado
 function agregarCPU(nombre, ini, fin){
     let cpuBox = document.getElementById("cpuBox");
@@ -41,7 +52,7 @@ function animarMovimiento(nombre, fromId, toId, callback){
         return;
     }
 
-    const items = fromBox.querySelectorAll(".proc");
+    const items = fromBox.querySelectorAll(".proc, .proc-es");
 
     if(items.length === 0){
         callback();
@@ -79,7 +90,6 @@ function animarMovimiento(nombre, fromId, toId, callback){
         callback();
     }, DURACION_ANIM + 50);
 }
-
 function mostrarPaso(){
     if(bloqueado) return;
     bloqueado = true;
@@ -94,10 +104,18 @@ function mostrarPaso(){
     const g = gantt[paso];
     const procesoActual = g[0];
 
+    if (cesActivos.includes(procesoActual)) {
+    cesActivos = cesActivos.filter(p => p !== procesoActual);
+}
+
     // ===== CPL actual en este paso (cola completa hasta ahora) =====
     const cplActual = cpl.slice(0, paso + 1);
-    renderCola("cplBox", cplActual);
+    renderCola("cplBox", cplActual, cesActivos);
 
+    if (cesActivos.includes(procesoActual)) {
+    salirDeES(procesoActual, cplActual);
+    return;
+}
     // ===== Animación CPL → CPU =====
     animarMovimiento(procesoActual, "cplBox", "cpuBox", ()=>{
 
@@ -116,17 +134,22 @@ function mostrarPaso(){
             // ===== Animación CPU → E/S =====
             animarMovimiento(procesoActual, "cpuBox", "cesBox", ()=>{
                 cesIndex++;
+                if (!cesActivos.includes(procesoActual)) {
+                    cesActivos.push(procesoActual);
+                }
 
                 const cesActual = ces.slice(0, cesIndex);
                 renderCola("cesBox", cesActual);
+                renderCola("cplBox", cplActual, cesActivos)
 
                 paso++;
                 bloqueado = false;
             });
 
         } else {
-            // solo render CES actual
+
             const cesActual = ces.slice(0, cesIndex);
+            renderCola("cplBox", cplActual, cesActivos);
             renderCola("cesBox", cesActual);
 
             paso++;
@@ -134,7 +157,20 @@ function mostrarPaso(){
         }
     });
 }
+function salirDeES(procesoActual, cplActual){
+    bloqueado = true;
 
+    animarMovimiento(procesoActual, "cesBox", "cplBox", () => {
+
+        cesActivos = cesActivos.filter(p => p !== procesoActual);
+
+        renderCola("cesBox", cesActivos);
+        renderCola("cplBox", cplActual,cesActivos);
+
+        paso++;
+        bloqueado = false;
+    });
+}
 function siguiente(){
     mostrarPaso();
 }
@@ -167,3 +203,4 @@ function reiniciar(){
     document.getElementById("cesBox").innerHTML = "";
     document.getElementById("final").style.display = "none";
 }
+

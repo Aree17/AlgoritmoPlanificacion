@@ -34,6 +34,8 @@ def simular(request):
     gantt, cpl, ces, completados, prom_tep, prom_teje = sjf_simular(procesos)
 
     return render(request, "resultado.html", {
+        "procesos": procesos,
+
         "gantt": gantt,
         "cpl": cpl,
         "ces": ces,
