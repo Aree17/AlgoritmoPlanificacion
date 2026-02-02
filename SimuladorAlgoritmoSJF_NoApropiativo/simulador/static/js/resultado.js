@@ -23,8 +23,8 @@ function renderCola(id, lista, bloqueados = []) {
         if (id === "cesBox" && p.retorno !== undefined) {
     html += `
         <div class="tiempo">
-            restante: ${p.restante} <br>
-            vuelve: ${p.retorno}
+            R: ${p.restante} <br>
+            Retorno: ${p.retorno}
         </div>
     `;
     }
@@ -48,32 +48,60 @@ function agregarCPU(nombre, ini, fin) {
     cpuBox.appendChild(d);
 }
 
-function animarMovimiento(nombre, fromId, toId, callback) {
-    const from = document.getElementById(fromId);
-    const to = document.getElementById(toId);
-    const items = from.querySelectorAll(".proc, .proc-es");
-    if (!items.length) return callback();
+function animarMovimiento(nombre, fromId, toId, callback){
+  const fromBox = document.getElementById(fromId);
+  const toBox   = document.getElementById(toId);
 
-    const elem = items[items.length - 1];
-    const clone = elem.cloneNode(true);
-    clone.className = "flying-proc";
+  if(!fromBox || !toBox){ callback(); return; }
 
-    const a = elem.getBoundingClientRect();
-    const b = to.getBoundingClientRect();
+  // Tomar el elemento exacto por nombre (evita animar el incorrecto)
+  const items = fromBox.querySelectorAll(".proc, .proc-es");
+  const elem  = [...items].find(el => el.textContent.trim().startsWith(nombre)) || items[items.length - 1];
 
-    clone.style.left = a.left + "px";
-    clone.style.top = a.top + "px";
-    document.body.appendChild(clone);
+  if(!elem){ callback(); return; }
 
-    requestAnimationFrame(() => {
-        clone.style.transform = `translate(${b.left - a.left + 40}px, ${b.top - a.top + 60}px)`;
-        clone.style.opacity = "0";
-    });
+  const start = elem.getBoundingClientRect();
 
-    setTimeout(() => {
-        clone.remove();
-        callback();
-    }, DURACION_ANIM);
+  // 1) Placeholder invisible AL FINAL del destino (flex calcula posición real de "append")
+  const ph = document.createElement("div");
+  ph.className = elem.className;          // mismo tamaño que un proc real
+  ph.textContent = nombre;
+  ph.style.visibility = "hidden";
+  ph.style.pointerEvents = "none";
+  toBox.appendChild(ph);
+
+  // Si hay overflow horizontal, ve al final para que el end sea real/visible
+  toBox.scrollLeft = toBox.scrollWidth;
+
+  const end = ph.getBoundingClientRect();
+
+  // 2) Clon que vuela
+  const clone = elem.cloneNode(true);
+  clone.className = "flying-proc";
+  clone.innerText = nombre;
+
+  clone.style.left = start.left + "px";
+  clone.style.top  = start.top  + "px";
+  document.body.appendChild(clone);
+
+  // Atenuar el original mientras vuela
+  elem.classList.add("moving");
+
+  // 3) Mover hacia el placeholder (sin offsets fijos +40/+60)
+  requestAnimationFrame(() => {
+    const dx = end.left - start.left;
+    const dy = end.top  - start.top;
+
+    clone.style.transform = `translate(${dx}px, ${dy}px)`;
+    clone.style.opacity = "0";
+  });
+
+  setTimeout(() => {
+    clone.remove();
+    ph.remove();
+    elem.classList.remove("moving");
+    callback();
+  }, DURACION_ANIM + 50);
 }
 
 function mostrarPaso() {
