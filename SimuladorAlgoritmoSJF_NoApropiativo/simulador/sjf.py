@@ -29,6 +29,7 @@ def sjf_simular(procesos):
                 listos.append(p)
                 pendientes.remove(p)
 
+        # ───── retorno E/S ─────
         for e in en_es[:]:
             if e["fin"] <= tiempo:
                 listos.append(e["proceso"])
@@ -42,17 +43,25 @@ def sjf_simular(procesos):
             ))
 
             p = listos.pop(0)
-            cpl.append(p.nombre)
-
             info = estado[p.nombre]
+
             restante = info["rafaga"] - info["ejecutado"]
+
+            cpl.append({
+                "nombre": p.nombre,
+                "restante": restante
+            })
+
             inicio = tiempo
 
-            if info["es_index"] < len(info["es"]) and len(info["es"][info["es_index"]]) == 2:
-                proxima_es, dur_es = info["es"][info["es_index"]]
-            else:
-                proxima_es = None
-                dur_es = None
+            proxima_es = None
+            dur_es = None
+
+            if info["es_index"] < len(info["es"]):
+                es_actual = info["es"][info["es_index"]]
+                if isinstance(es_actual, (list, tuple)) and len(es_actual) == 2:
+                    proxima_es, dur_es = es_actual
+
 
             if proxima_es is not None and info["ejecutado"] < proxima_es:
                 ejecutar = min(restante, proxima_es - info["ejecutado"])
@@ -65,13 +74,20 @@ def sjf_simular(procesos):
             info["ejecutado"] += ejecutar
             tiempo = fin
 
+
             if proxima_es is not None and info["ejecutado"] == proxima_es:
                 info["es_index"] += 1
+
+                ces.append({
+                    "nombre": p.nombre,
+                    "retorno": tiempo + dur_es,
+                    "restante": info["rafaga"] - info["ejecutado"]
+                })
+
                 en_es.append({
                     "proceso": p,
                     "fin": tiempo + dur_es
                 })
-                ces.append(p.nombre)
 
             elif info["ejecutado"] == info["rafaga"]:
                 info["fin"] = tiempo
@@ -83,13 +99,17 @@ def sjf_simular(procesos):
         else:
             tiempo += 1
 
+    # métricas
     resultados = []
-    total_tep = 0
-    total_teje = 0
+    total_tep = total_teje = 0
 
     for p in completados:
         info = estado[p.nombre]
-        total_es = sum(d[1] for d in info["es"] if len(d) == 2)
+
+        total_es = sum(
+            d[1] for d in info["es"]
+            if isinstance(d, (list, tuple)) and len(d) == 2
+        )
 
         tep = info["fin"] - info["llegada"] - info["rafaga"] - total_es
         teje = info["fin"] - info["llegada"]
