@@ -1,5 +1,5 @@
 .form-container {
-    max-width: 450px;
+    max-width: 1000px;
     margin: 40px auto;
     padding: 25px;
     background: #f7faff;
@@ -8,65 +8,129 @@
     font-family: Arial, sans-serif;
 }
 
+/* ---------- TITULOS ---------- */
 h2 {
-    text-align:center;
-    color:#003366;
+    text-align: center;
+    color: #003366;
+    margin-bottom: 20px;
 }
 
-form p {
-    margin-bottom: 12px;
+/* ---------- CONTROLES SUPERIORES ---------- */
+.control-panel {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
 }
 
+.control-panel input {
+    width: 120px;
+}
+
+/* ---------- GRID DE PROCESOS ---------- */
+#contenedorProcesos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+}
+
+/* ---------- TARJETA DE PROCESO ---------- */
+.proc-box {
+    padding: 14px;
+    border: 2px solid #1a8cff;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    transition: transform 0.2s;
+}
+
+.proc-box:hover {
+    transform: translateY(-4px);
+}
+
+.proc-box h4 {
+    margin: 0 0 10px 0;
+    color: #1a4fa3;
+    text-align: center;
+}
+
+/* ---------- INPUTS ---------- */
 input, select, textarea {
-    width:100%;
-    padding:8px;
-    border-radius:6px;
-    border:1px solid #aaa;
-    font-size:14px;
+    width: 75%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+    font-size: 14px;
+    margin-bottom: 8px;
 }
 
 input:focus, textarea:focus {
-    outline:none;
-    border-color:#1a8cff;
-    box-shadow:0 0 4px #1a8cff;
+    outline: none;
+    border-color: #1a8cff;
+    box-shadow: 0 0 4px #1a8cff;
 }
 
+/* ---------- E/S ---------- */
+.es-line {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.es-line input {
+    flex: 1;
+}
+
+/* ---------- BOTONES ---------- */
 button {
-    width:100%;
-    padding:10px;
-    background:#1a8cff;
-    color:white;
-    border:none;
-    border-radius:6px;
-    font-size:16px;
-    cursor:pointer;
-    font-weight:bold;
+    padding: 10px;
+    background: #1a8cff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    font-weight: bold;
 }
 
 button:hover {
-    background:#0066cc;
+    background: #0066cc;
     transform: scale(1.03);
-    transition:0.2s;
+    transition: 0.2s;
 }
 
+/* ---------- ACCIONES ---------- */
+.form-actions {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.form-actions button {
+    width: 300px;
+}
+
+/* ---------- LINK ---------- */
 .back-link {
-    display:block;
-    text-align:center;
-    margin-top:15px;
-    text-decoration:none;
-    color:#003366;
-    font-weight:bold;
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    text-decoration: none;
+    color: #003366;
+    font-weight: bold;
 }
 
 .back-link:hover {
-    text-decoration:underline;
+    text-decoration: underline;
 }
 
+/* ---------- ANIMACIÓN ---------- */
 .fade-in {
     animation: fadeIn 0.6s ease;
 }
 
 @keyframes fadeIn {
-    from {opacity:0; transform:translateY(15px);}
-    to {opacity:1; transform:translateY(0);}
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
 }

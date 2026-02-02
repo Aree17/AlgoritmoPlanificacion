@@ -1,56 +1,44 @@
-document.addEventListener("DOMContentLoaded", () => {
+console.log("JS ingresar_multiple cargado");
 
-    const form = document.getElementById("formProceso");
+function generarProcesos() {
+    const n = document.getElementById("numProcesos").value;
+    document.getElementById("num_procesos").value = n;
 
-    form.addEventListener("submit", function(e){
+    const cont = document.getElementById("contenedorProcesos");
+    cont.innerHTML = "";
 
-        const nombre = document.getElementById("id_nombre").value.trim();
-        const llegada = document.getElementById("id_tiempo_llegada").value;
-        const rafaga = document.getElementById("id_rafaga_cpu").value;
-        const es = document.getElementById("id_es").value.trim();
+    for (let i = 0; i < n; i++) {
+        cont.innerHTML += `
+        <fieldset class="proc-box">
+            <legend>Proceso ${i + 1}</legend>
 
-        if(nombre === ""){
-            alert("El nombre del proceso es obligatorio");
-            e.preventDefault();
-            return;
-        }
+            <label>Nombre</label>
+            <input name="nombre_${i}" value="P${i + 1}" required>
 
-        if(llegada === "" || llegada < 0){
-            alert("El tiempo de llegada debe ser válido");
-            e.preventDefault();
-            return;
-        }
+            <label>Llegada</label>
+            <input type="number" name="llegada_${i}" required>
 
-        if(rafaga === "" || rafaga <= 0){
-            alert("La ráfaga CPU debe ser mayor que 0");
-            e.preventDefault();
-            return;
-        }
+            <label>Ráfaga CPU</label>
+            <input type="number" name="rafaga_${i}" required>
 
-        // Validación formato [[x,y],[x,y]]
-        if(es !== ""){
-            try{
-                const data = JSON.parse(es.replace(/'/g,'"'));
+            <div id="es_${i}">
+                <h4>Operaciones E/S</h4>
+            </div>
 
-                if(!Array.isArray(data)){
-                    throw "Formato incorrecto";
-                }
+            <button type="button" onclick="agregarES(${i})">+ E/S</button>
+        </fieldset>
+        `;
+    }
+}
 
-                for(let par of data){
-                    if(!Array.isArray(par) || par.length !== 2){
-                        throw "Formato incorrecto";
-                    }
-                    if(isNaN(par[0]) || isNaN(par[1])){
-                        throw "Formato incorrecto";
-                    }
-                }
-            }
-            catch(err){
-                alert("Formato E/S inválido. Use: [[3,3],[4,4]]");
-                e.preventDefault();
-            }
-        }
+function agregarES(i) {
+    const cont = document.getElementById(`es_${i}`);
+    const idx = cont.querySelectorAll(".es-line").length;
 
-    });
-
-});
+    cont.innerHTML += `
+        <div class="es-line">
+            <input type="number" name="es_t_${i}_${idx}" placeholder="Instante">
+            <input type="number" name="es_d_${i}_${idx}" placeholder="Duración">
+        </div>
+    `;
+}

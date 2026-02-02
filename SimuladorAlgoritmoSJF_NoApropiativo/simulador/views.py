@@ -4,16 +4,40 @@ from .models import Proceso
 from .sjf import sjf_simular
 import json
 
-
 def ingresar_proceso(request):
-    if request.method == 'POST':
-        form = ProcesoForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('lista_procesos')
-    else:
-        form = ProcesoForm()
-    return render(request, 'ingresar.html', {'form': form})
+    if request.method == "POST":
+        total = int(request.POST.get("num_procesos", 0))
+
+        for i in range(total):
+            nombre = request.POST.get(f"nombre_{i}")
+            llegada = request.POST.get(f"llegada_{i}")
+            rafaga = request.POST.get(f"rafaga_{i}")
+
+            # 🔹 Extraer operaciones E/S
+            es = []
+            j = 0
+            while True:
+                t = request.POST.get(f"es_t_{i}_{j}")
+                d = request.POST.get(f"es_d_{i}_{j}")
+
+                if t is None or d is None:
+                    break
+
+                if t != "" and d != "":
+                    es.append([int(t), int(d)])
+
+                j += 1
+
+            Proceso.objects.create(
+                nombre=nombre,
+                tiempo_llegada=int(llegada),
+                rafaga_cpu=int(rafaga),
+                es=es
+            )
+
+        return redirect("lista_procesos")
+
+    return render(request, "ingresar.html")
 
 
 def lista_procesos(request):
