@@ -1,35 +1,39 @@
 {% load static %}
 <!DOCTYPE html>
-
-<html>
+<html lang="es">
 <head>
-    <title>Ingresar Procesos</title>
-    <link rel="stylesheet" href="{% static 'css/ingresar.css' %}">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ingresar Procesos</title>
+  <link rel="stylesheet" href="{% static 'css/ingresar.css' %}">
 </head>
 <body>
 
-<div class="form-container">
+  <div class="form-container fade-in">
+    <h2>Ingreso de procesos</h2>
+    <p>Registra los procesos para simular el algoritmo SJF no apropiativo. Completa los campos y guarda.</p>
 
-<h2>Ingreso de procesos</h2>
+    <div class="control-panel">
+      <div>
+        <label for="numProcesos">Número de procesos</label>
+        <input type="number" id="numProcesos" min="1" value="">
+      </div>
+      <button type="button" onclick="generarProcesos()">Generar</button>
+    </div>
 
-<label>Número de procesos:</label>
-<input type="number" id="numProcesos" min="1" value="">
-<button type="button" onclick="generarProcesos()">Generar</button>
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="num_procesos" id="num_procesos">
+      <div id="contenedorProcesos"></div>
 
-<form method="post">
-{% csrf_token %}
-<input type="hidden" name="num_procesos" id="num_procesos">
+      <div class="form-actions">
+        <button type="submit">Guardar procesos</button>
+      </div>
+    </form>
 
-<div id="contenedorProcesos"></div>
+    <a class="back-link" href="/lista/">Ver procesos</a>
+  </div>
 
-<button type="submit">Guardar procesos</button>
-</form>
-
-<a class="back-link" href="/lista/">Ver procesos</a>
-
-</div>
-
-<script src="{% static 'js/ingresar.js' %}"></script>
-
+  <script src="{% static 'js/ingresar.js' %}"></script>
 </body>
 </html>

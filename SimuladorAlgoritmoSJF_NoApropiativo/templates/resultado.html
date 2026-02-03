@@ -1,110 +1,139 @@
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/resultado.css' %}">
-<link rel="stylesheet" href="{% static 'css/simulacion_visual.css' %}">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulación SJF No Apropiativo</title>
+
+  <link rel="stylesheet" href="{% static 'css/resultado.css' %}">
+  <link rel="stylesheet" href="{% static 'css/simulacion_visual.css' %}">
+</head>
+<body>
 
 <script>
 const gantt = {{ gantt_js|safe }};
 const cpl = {{ cpl_js|safe }};
 const ces = {{ ces_js|safe }};
+if (Array.isArray(cpl)) {
+  cpl.forEach((p, i) => {
+    if (p.uid == null) p.uid = `${p.nombre}#${i}`;
+  });
+}
+if (Array.isArray(ces)) {
+  ces.forEach((p, i) => {
+    if (p.uid == null) p.uid = `${p.nombre}#ces${i}`;
+  });
+}
 </script>
-<h2>Simulación Algoritmo SFJ No Apropiativo</h2>
+
+<h2>Simulación Algoritmo SJF No Apropiativo</h2>
 
 <div class="panel">
 
-<div class="tabla-procesos">
-   <h3>Tabla de procesos</h3>
-        <table>
-            <tr>
-                <th>Proceso</th>
-                <th>Llegada</th>
-                <th>RafagaCPU</th>
-                <th>0E/S</th>
-            </tr>
-            {% for p in procesos %}
-            <tr>
-                <td>{{p.nombre }}</td>
-                <td>{{ p.tiempo_llegada }}</td>
-                <td>{{ p.rafaga_cpu }}</td>
-                <td>
-                   {% if p.es and p.es|length > 0 %}
-                      {% for op in p.es %}
-                         {% if op|length == 2 %}
-                             E/S {{ op.0 }} → {{ op.1 }} ms<br>
-                         {% endif %}
-                      {% endfor %}
-                   {% else %}
-                    <i></i>
-                   {% endif %}
-                </td>
-            </tr>
+  <div class="tabla-procesos">
+    <h3>Tabla de procesos</h3>
+    <table>
+      <tr>
+        <th>Proceso</th>
+        <th>Llegada</th>
+        <th>Ráfaga CPU</th>
+        <th>O. E/S</th>
+      </tr>
+      {% for p in procesos %}
+      <tr>
+        <td>{{ p.nombre }}</td>
+        <td>{{ p.tiempo_llegada }}</td>
+        <td>{{ p.rafaga_cpu }}</td>
+        <td>
+          {% if p.es and p.es|length > 0 %}
+            {% for op in p.es %}
+              {% if op|length == 2 %}
+                E/S {{ op.0 }} → {{ op.1 }} ms<br>
+              {% endif %}
             {% endfor %}
-        </table>
+          {% else %}
+            <i></i>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div class="contenido">
+    <div class="box">
+      <h3>CPL</h3>
+      <div id="cplBox"></div>
     </div>
-<div class = "contenido">
-<div class="box">
-    <h3>CPL</h3>
-    <div id="cplBox"></div>
+
+    <div class="box">
+      <h3>Cola E/S</h3>
+      <div id="cesBox"></div>
+    </div>
+
+    <div class="box cpu">
+      <h3>CPU</h3>
+      <div id="cpuBox"></div>
+    </div>
+  </div>
+
 </div>
 
-<div class="box">
-    <h3>Cola E/S</h3>
-    <div id="cesBox"></div>
-</div>
-<div class="box cpu">
-    <h3>CPU</h3>
-    <div id="cpuBox"></div>
-</div>
-</div>
-</div>
 <div class="controls">
-    <button class="btn" onclick="siguiente()">Siguiente paso</button>
-    <button class="btn" onclick="auto()">Automático</button>
-    <button class="btn" onclick="reiniciar()">Reiniciar Simulación</button>
+  <button class="btn" onclick="siguiente()">Siguiente paso</button>
+  <button class="btn" onclick="auto()">Automático</button>
+  <button class="btn" onclick="reiniciar()">Reiniciar Simulación</button>
 </div>
+
 <div class="final-actions">
-<a href="{% url 'ingresar' %}"><button class="btn btn-run">Agregar proceso</button></a>
-<a href="{% url 'lista_procesos' %}"><button class="btn btn-list">Ver lista de procesos</button></a>
+  <a href="{% url 'ingresar' %}"><button class="btn btn-run">Agregar proceso</button></a>
+  <a href="{% url 'lista_procesos' %}"><button class="btn btn-list">Ver lista de procesos</button></a>
 </div>
-<!--RESULTADOS FINALES-->
+
+<!-- RESULTADOS FINALES -->
 <div id="final" class="final-box" style="display:none;">
 
-<h2>Gantt CPU</h2>
-<table>
-<tr><th>Proceso</th><th>Inicio</th><th>Fin</th></tr>
-{% for g in gantt %}
-<tr>
-<td>{{ g.0 }}</td>
-<td>{{ g.1 }}</td>
-<td>{{ g.2 }}</td>
-</tr>
-{% endfor %}
-</table>
+  <h2>Gantt CPU</h2>
+  <table>
+    <tr><th>Proceso</th><th>Inicio</th><th>Fin</th></tr>
+    {% for g in gantt %}
+    <tr>
+      <td>{{ g.0 }}</td>
+      <td>{{ g.1 }}</td>
+      <td>{{ g.2 }}</td>
+    </tr>
+    {% endfor %}
+  </table>
 
-<h2>CPL</h2>
-<p>{{ cpl|join:" → " }}</p>
+  <h2>CPL</h2>
+  <p>{{ cpl|join:" → " }}</p>
 
-<h2>Cola de Operaciones E/S</h2>
-<p>{{ ces|join:" → " }}</p>
+  <h2>Cola de Operaciones E/S</h2>
+  <p>{{ ces|join:" → " }}</p>
 
-<h2>Métricas</h2>
-<table>
-<tr><th>Proceso</th><th>TEP</th><th>TEjeP</th></tr>
-{% for c in completados %}
-<tr>
-<td>{{ c.proceso }}</td>
-<td>{{ c.TEP }}</td>
-<td>{{ c.TEjeP }}</td>
-</tr>
-{% endfor %}
-</table>
+  <h2>Métricas</h2>
+  <table>
+    <tr><th>Proceso</th><th>TEP</th><th>TEjeP</th></tr>
+    {% for c in completados %}
+    <tr>
+      <td>{{ c.proceso }}</td>
+      <td>{{ c.TEP }}</td>
+      <td>{{ c.TEjeP }}</td>
+    </tr>
+    {% endfor %}
+  </table>
 
-<h3>Promedios</h3>
-<table>
-<tr><th>Promedio TEP</th><th>Promedio TEjeP</th></tr>
-<tr>
-<td>{{ prom_tep|floatformat:2 }}</td>
-<td>{{ prom_teje|floatformat:2 }}</td>
-</tr>
-</table>
+  <h3>Promedios</h3>
+  <table>
+    <tr><th>Promedio TEP</th><th>Promedio TEjeP</th></tr>
+    <tr>
+      <td>{{ prom_tep|floatformat:2 }}</td>
+      <td>{{ prom_teje|floatformat:2 }}</td>
+    </tr>
+  </table>
 </div>
+
 <script src="{% static 'js/resultado.js' %}"></script>
+</body>
+</html>
