@@ -1,30 +1,11 @@
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Simulación SJF No Apropiativo</title>
-
-  <link rel="stylesheet" href="{% static 'css/resultado.css' %}">
-  <link rel="stylesheet" href="{% static 'css/simulacion_visual.css' %}">
-</head>
-<body>
+<link rel="stylesheet" href="{% static 'css/resultado.css' %}">
+<link rel="stylesheet" href="{% static 'css/simulacion_visual.css' %}">
 
 <script>
 const gantt = {{ gantt_js|safe }};
 const cpl = {{ cpl_js|safe }};
 const ces = {{ ces_js|safe }};
-if (Array.isArray(cpl)) {
-  cpl.forEach((p, i) => {
-    if (p.uid == null) p.uid = `${p.nombre}#${i}`;
-  });
-}
-if (Array.isArray(ces)) {
-  ces.forEach((p, i) => {
-    if (p.uid == null) p.uid = `${p.nombre}#ces${i}`;
-  });
-}
 </script>
 
 <h2>Simulación Algoritmo SJF No Apropiativo</h2>
@@ -38,22 +19,36 @@ if (Array.isArray(ces)) {
         <th>Proceso</th>
         <th>Llegada</th>
         <th>Ráfaga CPU</th>
-        <th>O. E/S</th>
+        <th>E/S t</th>
+        <th>E/S ms</th>
       </tr>
       {% for p in procesos %}
       <tr>
         <td>{{ p.nombre }}</td>
         <td>{{ p.tiempo_llegada }}</td>
         <td>{{ p.rafaga_cpu }}</td>
+
         <td>
           {% if p.es and p.es|length > 0 %}
             {% for op in p.es %}
               {% if op|length == 2 %}
-                E/S {{ op.0 }} → {{ op.1 }} ms<br>
+                {{ op.0 }}<br>
               {% endif %}
             {% endfor %}
           {% else %}
-            <i></i>
+            <i>-</i>
+          {% endif %}
+        </td>
+
+        <td>
+          {% if p.es and p.es|length > 0 %}
+            {% for op in p.es %}
+              {% if op|length == 2 %}
+                {{ op.1 }}<br>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            <i>-</i>
           {% endif %}
         </td>
       </tr>
@@ -91,7 +86,6 @@ if (Array.isArray(ces)) {
   <a href="{% url 'lista_procesos' %}"><button class="btn btn-list">Ver lista de procesos</button></a>
 </div>
 
-<!-- RESULTADOS FINALES -->
 <div id="final" class="final-box" style="display:none;">
 
   <h2>Gantt CPU</h2>
@@ -132,8 +126,7 @@ if (Array.isArray(ces)) {
       <td>{{ prom_teje|floatformat:2 }}</td>
     </tr>
   </table>
+
 </div>
 
 <script src="{% static 'js/resultado.js' %}"></script>
-</body>
-</html>
