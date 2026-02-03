@@ -11,12 +11,14 @@
 
   <div class="form-container fade-in">
     <h2>Ingreso de procesos</h2>
-    <p>Registra los procesos para simular el algoritmo SJF no apropiativo. Completa los campos y guarda.</p>
+    <p>Registra los procesos para simular el algoritmo SJF no apropiativo.</p>
+
+    <div id="msgError" class="msg msg-error" style="display:none;"></div>
 
     <div class="control-panel">
       <div>
         <label for="numProcesos">Número de procesos</label>
-        <input type="number" id="numProcesos" min="1" value="">
+        <input type="number" id="numProcesos" min="1">
       </div>
       <button type="button" onclick="generarProcesos()">Generar</button>
     </div>

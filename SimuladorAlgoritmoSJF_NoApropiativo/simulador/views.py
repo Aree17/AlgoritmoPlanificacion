@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Proceso
 from .sjf import sjf_simular
@@ -5,12 +6,38 @@ import json
 
 def ingresar_proceso(request):
     if request.method == "POST":
-        total = int(request.POST.get("num_procesos", 0))
+        num_raw = request.POST.get("num_procesos")
+        if not num_raw or not num_raw.isdigit():
+            messages.error(
+                request,
+                "Debe generar al menos un proceso antes de guardar."
+            )
+            return redirect("ingresar")
+
+        total = int(num_raw)
+
+        if total <= 0:
+            messages.error(
+                request,
+                "Debe generar al menos un proceso antes de guardar."
+            )
+            return redirect("ingresar")
 
         for i in range(total):
             nombre = request.POST.get(f"nombre_{i}")
             llegada = request.POST.get(f"llegada_{i}")
             rafaga = request.POST.get(f"rafaga_{i}")
+
+            if not nombre or not llegada or not rafaga:
+                messages.error(
+                    request,
+                    f"El proceso {i + 1} tiene campos incompletos."
+                )
+                return redirect("ingresar")
+
+            llegada = int(llegada)
+            rafaga = int(rafaga)
+
             es = []
             j = 0
             while True:
@@ -21,17 +48,29 @@ def ingresar_proceso(request):
                     break
 
                 if t != "" and d != "":
-                    es.append([int(t), int(d)])
+                    t = int(t)
+                    d = int(d)
+
+                    if t >= rafaga:
+                        messages.error(
+                            request,
+                            f"Error en {nombre}: el inicio de E/S ({t}) "
+                            f"no puede ser mayor o igual que la ráfaga ({rafaga})."
+                        )
+                        return redirect("ingresar")
+
+                    es.append([t, d])
 
                 j += 1
 
             Proceso.objects.create(
                 nombre=nombre,
-                tiempo_llegada=int(llegada),
-                rafaga_cpu=int(rafaga),
+                tiempo_llegada=llegada,
+                rafaga_cpu=rafaga,
                 es=es
             )
 
+        messages.success(request, "Procesos guardados correctamente.")
         return redirect("lista_procesos")
 
     return render(request, "ingresar.html")
