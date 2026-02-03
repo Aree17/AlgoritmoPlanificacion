@@ -240,3 +240,14 @@
   flex-direction: column;
   gap: 18px;
 }
+
+.proc-idle {
+  background: #e6e6e6;
+  border: 2px dashed #999;
+  color: #444;
+}
+
+.proc-idle strong {
+  color: #555;
+}
+

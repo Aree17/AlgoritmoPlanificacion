@@ -4,6 +4,8 @@ let cesIndex = 0;
 let cesActivos = [];
 let bloqueado = false;
 
+let ultimoFinCPU = 0;
+
 const DURACION_ANIM = 1200;
 const ESPERA_AUTO = 1600;
 
@@ -16,23 +18,21 @@ function renderCola(id, lista, bloqueados = []) {
     let html = `<strong>${p.nombre}</strong>`;
 
     if (id === "cplBox" && p.restante !== undefined) {
-      html += `<div class="tiempo"> ${p.restante}</div>`;
+      html += `<div class="tiempo">${p.restante}</div>`;
     }
 
     if (id === "cesBox" && p.retorno !== undefined) {
       html += `
         <div class="tiempo">
-          restante: ${p.restante}<br>
-          vuelve: ${p.retorno}
+          R: ${p.restante}<br>
+          Retorno: ${p.retorno}
         </div>
       `;
     }
 
     d.innerHTML = html;
 
-    if (id === "cplBox") {
-      d.className = "proc";
-    } else if (id === "cesBox") {
+    if (id === "cesBox") {
       d.className = "proc proc-es";
     } else {
       d.className = "proc";
@@ -50,14 +50,28 @@ function agregarCPU(nombre, ini, fin) {
   cpuBox.appendChild(d);
 }
 
-function animarMovimiento(nombre, fromId, toId, callback){
-  const fromBox = document.getElementById(fromId);
-  const toBox   = document.getElementById(toId);
+function agregarCPUIdle(ini, fin) {
+  let cpuBox = document.getElementById("cpuBox");
+  let d = document.createElement("div");
 
-  if(!fromBox || !toBox){ callback(); return; }
+  d.className = "proc proc-idle";
+  d.innerHTML = `
+    <div class="proc-title">&nbsp;</div>
+    <div class="tiempo">${ini} → ${fin}</div>
+  `;
+
+  cpuBox.appendChild(d);
+}
+
+
+function animarMovimiento(nombre, fromId, toId, callback) {
+  const fromBox = document.getElementById(fromId);
+  const toBox = document.getElementById(toId);
+
+  if (!fromBox || !toBox) { callback(); return; }
 
   const items = fromBox.querySelectorAll(".proc, .proc-es");
-  if(!items.length){ callback(); return; }
+  if (!items.length) { callback(); return; }
 
   const elem = items[items.length - 1];
   const start = elem.getBoundingClientRect();
@@ -65,7 +79,6 @@ function animarMovimiento(nombre, fromId, toId, callback){
   const ph = document.createElement("div");
   ph.className = elem.className;
   ph.style.visibility = "hidden";
-  ph.style.pointerEvents = "none";
   ph.innerHTML = elem.innerHTML;
   toBox.appendChild(ph);
 
@@ -75,15 +88,14 @@ function animarMovimiento(nombre, fromId, toId, callback){
   const clone = elem.cloneNode(true);
   clone.className = "flying-proc";
   clone.style.left = start.left + "px";
-  clone.style.top  = start.top  + "px";
+  clone.style.top = start.top + "px";
   document.body.appendChild(clone);
 
   elem.classList.add("moving");
 
   requestAnimationFrame(() => {
-    const dx = end.left - start.left;
-    const dy = end.top  - start.top;
-    clone.style.transform = `translate(${dx}px, ${dy}px)`;
+    clone.style.transform =
+      `translate(${end.left - start.left}px, ${end.top - start.top}px)`;
     clone.style.opacity = "0";
   });
 
@@ -92,14 +104,12 @@ function animarMovimiento(nombre, fromId, toId, callback){
     ph.remove();
     elem.classList.remove("moving");
     callback();
-  }, DURACION_ANIM + 50);
+  }, DURACION_ANIM);
 }
 
 function mostrarPaso() {
-  const TOTAL_PASOS = gantt.length;
-
-  if (bloqueado || paso >= TOTAL_PASOS) {
-    if (paso >= TOTAL_PASOS) {
+  if (bloqueado || paso >= gantt.length) {
+    if (paso >= gantt.length) {
       detener();
       document.getElementById("final").style.display = "block";
     }
@@ -108,53 +118,64 @@ function mostrarPaso() {
 
   bloqueado = true;
 
-  if (paso < gantt.length) {
-    const g = gantt[paso];
-    const proc = g[0];
+  const g = gantt[paso];
+  const proc = g[0];
+  const ini = g[1];
+  const fin = g[2];
 
-    renderCola("cplBox", (cpl[paso] || []), cesActivos);
+  renderCola("cplBox", cpl[paso] || []);
 
-    animarMovimiento(proc, "cplBox", "cpuBox", () => {
-      agregarCPU(proc, g[1], g[2]);
+  animarMovimiento(proc, "cplBox", "cpuBox", () => {
 
-      if (cesIndex < ces.length && ces[cesIndex].nombre === proc) {
-        animarMovimiento(proc, "cpuBox", "cesBox", () => {
-          renderCola("cesBox", ces.slice(0, cesIndex + 1));
-          cesActivos.push(proc);
-          cesIndex++;
-          paso++;
-          bloqueado = false;
-        });
-      } else {
+    if (ini > ultimoFinCPU) {
+      agregarCPUIdle(ultimoFinCPU, ini);
+    }
+
+    agregarCPU(proc, ini, fin);
+    ultimoFinCPU = fin;
+
+    if (cesIndex < ces.length && ces[cesIndex].nombre === proc) {
+      animarMovimiento(proc, "cpuBox", "cesBox", () => {
+        renderCola("cesBox", ces.slice(0, cesIndex + 1));
+        cesActivos.push(proc);
+        cesIndex++;
         paso++;
         bloqueado = false;
-      }
-    });
-  } else {
-    renderCola("cplBox", cpl.slice(0, paso + 1), cesActivos);
-    renderCola("cesBox", ces.slice(0, paso + 1));
-    paso++;
-    bloqueado = false;
+      });
+    } else {
+      paso++;
+      bloqueado = false;
+    }
+  });
+}
+
+function siguiente() {
+  mostrarPaso();
+}
+
+function auto() {
+  if (!timer) {
+    timer = setInterval(() => {
+      if (!bloqueado) mostrarPaso();
+    }, ESPERA_AUTO);
   }
 }
 
-function siguiente(){ mostrarPaso(); }
-
-function auto(){
-  if(!timer) timer = setInterval(() => !bloqueado && mostrarPaso(), ESPERA_AUTO);
-}
-
-function detener(){
+function detener() {
   clearInterval(timer);
   timer = null;
 }
 
-function reiniciar(){
+function reiniciar() {
   detener();
   paso = 0;
   cesIndex = 0;
   cesActivos = [];
+  ultimoFinCPU = 0;
+
   document.getElementById("cpuBox").innerHTML = "";
   document.getElementById("cplBox").innerHTML = "";
   document.getElementById("cesBox").innerHTML = "";
+  document.getElementById("final").style.display = "none";
 }
+
