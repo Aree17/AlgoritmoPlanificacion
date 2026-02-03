@@ -96,7 +96,7 @@ function animarMovimiento(nombre, fromId, toId, callback){
 }
 
 function mostrarPaso() {
-  const TOTAL_PASOS = Math.max(gantt.length, cpl.length, ces.length);
+  const TOTAL_PASOS = gantt.length;
 
   if (bloqueado || paso >= TOTAL_PASOS) {
     if (paso >= TOTAL_PASOS) {
@@ -112,7 +112,7 @@ function mostrarPaso() {
     const g = gantt[paso];
     const proc = g[0];
 
-    renderCola("cplBox", cpl.slice(0, paso + 1), cesActivos);
+    renderCola("cplBox", (cpl[paso] || []), cesActivos);
 
     animarMovimiento(proc, "cplBox", "cpuBox", () => {
       agregarCPU(proc, g[1], g[2]);

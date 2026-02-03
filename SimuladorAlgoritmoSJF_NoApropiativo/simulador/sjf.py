@@ -29,28 +29,32 @@ def sjf_simular(procesos):
                 listos.append(p)
                 pendientes.remove(p)
 
-        # ───── retorno E/S ─────
         for e in en_es[:]:
             if e["fin"] <= tiempo:
                 listos.append(e["proceso"])
                 en_es.remove(e)
 
         if listos:
-
             listos.sort(key=lambda x: (
                 estado[x.nombre]["rafaga"] - estado[x.nombre]["ejecutado"],
                 estado[x.nombre]["llegada"]
             ))
 
+            p_cpu = listos[0]
+
+            orden_cpl = listos[1:] + [p_cpu]
+            snapshot = []
+            for q in orden_cpl:
+                iq = estado[q.nombre]
+                snapshot.append({
+                    "nombre": q.nombre,
+                    "restante": iq["rafaga"] - iq["ejecutado"]
+                })
+            cpl.append(snapshot)
+
             p = listos.pop(0)
             info = estado[p.nombre]
-
             restante = info["rafaga"] - info["ejecutado"]
-
-            cpl.append({
-                "nombre": p.nombre,
-                "restante": restante
-            })
 
             inicio = tiempo
 
@@ -98,8 +102,6 @@ def sjf_simular(procesos):
 
         else:
             tiempo += 1
-
-    # métricas
     resultados = []
     total_tep = total_teje = 0
 

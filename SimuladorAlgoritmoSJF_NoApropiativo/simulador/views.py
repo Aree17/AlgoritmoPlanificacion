@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ProcesoForm
 from .models import Proceso
 from .sjf import sjf_simular
 import json
@@ -12,8 +11,6 @@ def ingresar_proceso(request):
             nombre = request.POST.get(f"nombre_{i}")
             llegada = request.POST.get(f"llegada_{i}")
             rafaga = request.POST.get(f"rafaga_{i}")
-
-            # 🔹 Extraer operaciones E/S
             es = []
             j = 0
             while True:
@@ -61,15 +58,21 @@ def simular(request):
     procesos = list(Proceso.objects.all())
 
     gantt, cpl, ces, completados, prom_tep, prom_teje = sjf_simular(procesos)
-
-    # 🔹 Para JS (objetos completos)
     gantt_js = json.dumps(gantt)
     cpl_js = json.dumps(cpl)
     ces_js = json.dumps(ces)
+    def nombres_finales(cola):
+        if not cola:
+            return []
 
-    # 🔹 Para mostrar en resultados finales (solo nombres)
-    cpl_nombres = [p["nombre"] for p in cpl]
-    ces_nombres = [p["nombre"] for p in ces]
+        if isinstance(cola[0], list):
+            ultima = cola[-1] or []
+            return [p["nombre"] for p in ultima]
+
+        return [p["nombre"] for p in cola]
+
+    cpl_nombres = nombres_finales(cpl)
+    ces_nombres = nombres_finales(ces)
 
     return render(request, "resultado.html", {
         "procesos": procesos,
@@ -80,11 +83,11 @@ def simular(request):
         "prom_tep": prom_tep,
         "prom_teje": prom_teje,
 
-        # Vistas finales (texto)
+        # Vistas finales
         "cpl": cpl_nombres,
         "ces": ces_nombres,
 
-        # Frontend JS
+        # Frontend
         "gantt_js": gantt_js,
         "cpl_js": cpl_js,
         "ces_js": ces_js,
