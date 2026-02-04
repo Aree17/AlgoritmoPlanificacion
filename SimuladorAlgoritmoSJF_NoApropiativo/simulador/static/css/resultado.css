@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700;800&display=swap');
 
 :root{
-  /* === PALETA DEFINIDA (MISMA QUE INGRESAR) === */
   --bg: #E9EDF1;
 
   --surface: #FFFFFF;
@@ -14,9 +13,9 @@
   --text: #2B2F33;
   --muted: #5F6B73;
 
-  --primary: #1F2F44;      /* azul marino */
-  --primary-2: #2F4A66;    /* azul grisáceo */
-  --accent: #C9C3A9;       /* beige suave */
+  --primary: #1F2F44;
+  --primary-2: #2F4A66;
+  --accent: #C9C3A9;
 
   --border: rgba(43,47,51,.18);
   --border-strong: rgba(43,47,51,.28);
@@ -45,7 +44,6 @@ h2{
   color: var(--primary);
 }
 
-/* === LAYOUT PRINCIPAL === */
 .panel{
   max-width: 1200px;
   margin: 20px auto 18px auto;
@@ -62,7 +60,6 @@ h2{
   }
 }
 
-/* === TABLA DE PROCESOS (IZQUIERDA) === */
 .tabla-procesos{
   background: var(--surface);
   border-radius: var(--radius);
@@ -98,15 +95,14 @@ h2{
 }
 
 .tabla-procesos tbody tr:nth-child(even){
-  background: rgba(221,227,232,.55); /* surface-2 suave */
+  background: rgba(221,227,232,.55);
 }
 
 .tabla-procesos tbody tr:hover{
-  background: rgba(201,195,169,.25); /* accent suave */
+  background: rgba(201,195,169,.25);
   transition: .15s;
 }
 
-/* === CONTENIDO DERECHA (CPL / E/S / CPU) === */
 .contenido{
   display: grid;
   grid-template-columns: 1fr;
@@ -146,12 +142,10 @@ h2{
   padding: 14px;
 }
 
-/* CPU suele ser más grande */
 .box.cpu #cpuBox{
   min-height: 180px;
 }
 
-/* === CONTROLES === */
 .controls{
   max-width: 1200px;
   margin: 14px auto 0 auto;
@@ -162,7 +156,6 @@ h2{
   flex-wrap: wrap;
 }
 
-/* Botón base (para .btn y para buttons generales) */
 .btn, .controls button, .final-actions button{
   border: 0;
   border-radius: 14px;
@@ -182,7 +175,6 @@ h2{
   filter: brightness(1.02);
 }
 
-/* Variantes de botones finales */
 .btn-run{
   background: linear-gradient(180deg, var(--primary-2), var(--primary));
 }
@@ -197,7 +189,6 @@ h2{
   filter: brightness(1.03);
 }
 
-/* === ACCIONES FINALES === */
 .final-actions{
   max-width: 1200px;
   margin: 8px auto 0 auto;
@@ -208,7 +199,6 @@ h2{
   flex-wrap: wrap;
 }
 
-/* === CAJA FINAL (Gantt / Métricas) === */
 .final-box{
   max-width: 1200px;
   margin: 18px auto 40px auto;
@@ -244,7 +234,6 @@ h2{
   border: 1px solid rgba(43,47,51,.12);
 }
 
-/* Tablas dentro del final */
 .final-box table{
   width: 100%;
   border-collapse: collapse;
@@ -276,24 +265,21 @@ h2{
   to{ opacity: 1; transform: translateY(0); }
 }
 
-/* Asegura que el contenedor no recorte las tarjetas */
 #cplBox, #cesBox, #cpuBox{
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
-  padding-bottom: 10px;      /* espacio para la barrita */
+  padding-bottom: 10px;
   -webkit-overflow-scrolling: touch;
 }
 
-/* Si tus procesos se renderizan como .proc (como en tu JS), hazlos acoplables */
 #cplBox .proc, #cesBox .proc, #cpuBox .proc{
   display: inline-block;
   vertical-align: top;
   margin-right: 10px;
-  white-space: normal;       /* permite que el texto interno haga salto */
+  white-space: normal;
 }
 
-/* Opcional: que el scroll se vea “bonito” */
 #cplBox::-webkit-scrollbar,
 #cesBox::-webkit-scrollbar,
 #cpuBox::-webkit-scrollbar{

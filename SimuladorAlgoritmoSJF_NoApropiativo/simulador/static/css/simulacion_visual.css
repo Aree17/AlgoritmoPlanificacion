@@ -21,7 +21,6 @@
   --neutral: #94A3B8;
 }
 
-/* Layout general */
 .panel{
   max-width: 1400px;
   margin: 0 auto;
@@ -30,8 +29,6 @@
   flex-direction: row;
   align-items: flex-start;
   gap: 18px;
-
-  /* importante: NO fuerces altura aquí */
   height: auto;
   overflow: visible;
 }
@@ -42,12 +39,10 @@
   gap: 18px;
   flex: 1;
 
-  /* importante: NO cortes el contenido */
   height: auto;
   overflow: visible;
 }
 
-/* Tabla lateral */
 .tabla-procesos{
   width: 340px;
   background: var(--surface);
@@ -94,13 +89,12 @@
   background: var(--surface-2);
 }
 
-/* Boxes CPL / E/S / CPU */
+
 .box{
   display: flex;
   flex-direction: column;
   width: 100%;
 
-  /* clave: sin height fijo para que no recorte */
   min-height: 170px;
   height: auto;
   max-height: none;
@@ -111,7 +105,6 @@
   background: var(--surface);
   box-shadow: 0 10px 22px rgba(2,6,23,.06);
 
-  /* clave: no recortes */
   overflow: visible;
 }
 
@@ -128,7 +121,6 @@
   border-color: rgba(14,165,233,.45);
 }
 
-/* Contenedores internos con scroll horizontal */
 #cplBox, #cesBox, #cpuBox{
   flex: 1;
   min-height: 0;
@@ -147,7 +139,6 @@
   -webkit-overflow-scrolling: touch;
 }
 
-/* Tarjetas de procesos */
 .proc{
   background: var(--ready);
   color: white;
@@ -160,6 +151,7 @@
   box-shadow: 0 8px 16px rgba(2,6,23,.18);
   transition: opacity 0.3s ease;
   flex: 0 0 auto;
+  height: 70px;
 }
 
 .proc.proc-es{
@@ -185,7 +177,6 @@
   to{ opacity:1; transform: translateY(0); }
 }
 
-/* Controles */
 .controls{
   text-align:center;
   margin: 18px 0 0 0;
@@ -221,20 +212,22 @@
   box-shadow: 0 12px 18px rgba(245,158,11,.16);
 }
 
-/* Flying */
 .flying-proc{
   position: fixed;
   z-index: 9999;
   background: var(--ready);
   color: white;
-  padding: 10px 14px;
-  border-radius: 16px;
+  width: 90px;
+  height: 70px;
+  padding: 10px 12px;
+  border-radius: 14px;
   font-weight: 900;
-  text-align: center;
+  text-align: left;
   box-shadow: 0 16px 26px rgba(2,6,23,.28);
   pointer-events: none;
   transition: transform 1.2s cubic-bezier(.2,.9,.2,1), opacity 1.2s ease;
   opacity: 1;
+  box-sizing: border-box;
 }
 
 .proc-hist{

@@ -3,7 +3,6 @@ let timer = null;
 let cesIndex = 0;
 let cesActivos = [];
 let bloqueado = false;
-
 let ultimoFinCPU = 0;
 
 const DURACION_ANIM = 1200;

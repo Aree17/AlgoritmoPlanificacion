@@ -1,26 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700;800&display=swap');
 
 :root{
-  /* Fondo general */
   --bg: #E9EDF1;
-
-  /* Superficies */
   --surface: #FFFFFF;
   --surface-2: #DDE3E8;
 
-  /* Tarjetas e inputs (clave visual) */
   --card-soft: #D6DEE5;
   --input-soft: #E3E8ED;
   --readonly-soft: #CCD6DF;
 
-  /* Texto */
   --text: #2B2F33;
   --muted: #5F6B73;
 
-  /* Colores principales (imagen) */
-  --primary: #1F2F44;      /* azul marino */
-  --primary-2: #2F4A66;    /* azul grisáceo */
-  --accent: #C9C3A9;       /* beige suave */
+  --primary: #1F2F44;
+  --primary-2: #2F4A66;
+  --accent: #C9C3A9;
 
   --border: rgba(43,47,51,.18);
   --border-strong: rgba(43,47,51,.28);
@@ -44,7 +38,6 @@ body{
     var(--bg);
 }
 
-/* Contenedor principal */
 .form-container{
   max-width: 1050px;
   margin: 44px auto;
@@ -56,7 +49,6 @@ body{
   border: 1px solid var(--border);
 }
 
-/* Títulos */
 h2{
   margin: 0 0 10px 0;
   text-align: center;
@@ -72,7 +64,6 @@ h2{
   margin-bottom: 20px;
 }
 
-/* Labels */
 label{
   display: block;
   margin: 12px auto 6px auto;
@@ -82,7 +73,6 @@ label{
   font-size: 13.5px;
 }
 
-/* Panel superior */
 .control-panel{
   display: flex;
   gap: 12px;
@@ -95,7 +85,6 @@ label{
   width: 160px;
 }
 
-/* Inputs */
 input, select, textarea{
   width: 100%;
   max-width: 520px;
@@ -129,7 +118,6 @@ input[type="number"]{
   max-width: 240px;
 }
 
-/* Grid de procesos */
 #contenedorProcesos{
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -137,7 +125,6 @@ input[type="number"]{
   justify-items: center;
 }
 
-/* Tarjeta de proceso */
 .proc-box{
   width: 100%;
   max-width: 520px;
@@ -149,7 +136,6 @@ input[type="number"]{
   position: relative;
 }
 
-/* Barra superior estilo imagen */
 .proc-box::before{
   content: "";
   position: absolute;
@@ -166,7 +152,6 @@ input[type="number"]{
   );
 }
 
-/* Operaciones E/S */
 .proc-box > div[id^="es_"]{
   margin-top: 12px;
   padding: 12px;
@@ -179,8 +164,6 @@ input[type="number"]{
   margin: 0 0 10px 0;
   color: var(--primary);
 }
-
-/* Botones */
 button{
   border: 0;
   border-radius: 14px;
@@ -205,7 +188,6 @@ button:hover{
   box-shadow: 0 14px 26px rgba(31,47,68,.45);
 }
 
-/* Acción principal */
 .form-actions{
   margin-top: 26px;
   text-align: center;
@@ -216,7 +198,6 @@ button:hover{
   padding: 13px 18px;
 }
 
-/* Link inferior */
 .back-link{
   display: block;
   margin-top: 14px;
@@ -230,7 +211,6 @@ button:hover{
   text-decoration: underline;
 }
 
-/* Animación */
 .fade-in{
   animation: fadeIn .5s ease;
 }
@@ -240,7 +220,6 @@ button:hover{
   to{ opacity: 1; transform: translateY(0); }
 }
 
-/* ⚠️ ERRORES (NO TOCAR – se mantienen) */
 .msg{
   margin: 12px auto 0 auto;
   max-width: 760px;

@@ -1,30 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700;800&display=swap');
 
 :root{
-  /* Fondo general */
   --bg: #E9EDF1;
-
-  /* Superficies */
   --surface: #FFFFFF;
   --surface-2: #DDE3E8;
-
-  /* Tarjetas e inputs (misma línea visual que ingresar) */
   --card-soft: #D6DEE5;
   --input-soft: #E3E8ED;
   --readonly-soft: #CCD6DF;
 
-  /* Texto */
   --text: #2B2F33;
   --muted: #5F6B73;
 
-  /* Colores principales (paleta imagen) */
-  --primary: #1F2F44;      /* azul marino */
-  --primary-2: #2F4A66;    /* azul grisáceo */
-  --accent: #C9C3A9;       /* beige suave */
+  --primary: #1F2F44;
+  --primary-2: #2F4A66;
+  --accent: #C9C3A9;
 
-  /* Botones especiales */
-  --danger: #B23A3A;       /* rojo más sobrio */
-  --success: #2E6B4C;      /* verde sobrio */
+  --danger: #B23A3A;
+  --success: #2E6B4C;
 
   --border: rgba(43,47,51,.18);
   --border-strong: rgba(43,47,51,.28);
@@ -66,7 +58,6 @@ h2{
   letter-spacing: .2px;
 }
 
-/* Tabla */
 table{
   width: 100%;
   border-collapse: collapse;
@@ -88,9 +79,8 @@ th, td{
   border-bottom: 1px solid rgba(43,47,51,.10);
 }
 
-/* Filas alternas suaves (menos blanco fuerte) */
 tbody tr:nth-child(even){
-  background: rgba(221, 227, 232, .55); /* surface-2 suave */
+  background: rgba(221, 227, 232, .55);
 }
 
 tbody tr:hover{
@@ -98,12 +88,10 @@ tbody tr:hover{
   transition: .15s;
 }
 
-/* Columna E/S para que no se vea “vacía fea” */
 tbody td i{
   color: rgba(95, 107, 115, .70);
 }
 
-/* Acciones */
 .actions{
   margin-top: 18px;
   text-align: center;
@@ -113,7 +101,6 @@ tbody td i{
   flex-wrap: wrap;
 }
 
-/* Botones base */
 .btn{
   padding: 11px 16px;
   border: none;
@@ -130,19 +117,16 @@ tbody td i{
   filter: brightness(1.02);
 }
 
-/* Azul sobrio */
 .btn-add{
   background: linear-gradient(180deg, var(--primary-2), var(--primary));
   box-shadow: 0 12px 22px rgba(31,47,68,.28);
 }
 
-/* Rojo sobrio (no tan “alerta”) */
 .btn-delete{
   background: linear-gradient(180deg, #C24A4A, var(--danger));
   box-shadow: 0 12px 22px rgba(178,58,58,.22);
 }
 
-/* Verde sobrio */
 .btn-run{
   background: linear-gradient(180deg, #3A7A5A, var(--success));
   box-shadow: 0 12px 22px rgba(46,107,76,.22);
