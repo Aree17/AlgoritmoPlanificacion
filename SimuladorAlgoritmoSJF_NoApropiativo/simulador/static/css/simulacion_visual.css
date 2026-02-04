@@ -260,3 +260,31 @@
   color:#fff;
   opacity:1;
 }
+<<<<<<< HEAD
+=======
+
+.panel{
+  height: calc(100vh - 120px);
+  overflow: visible;
+}
+
+.contenido{
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.proc-idle {
+  background: #e6e6e6;
+  border: 2px dashed #999;
+  color: #444;
+}
+
+.proc-idle strong {
+  color: #555;
+}
+
+>>>>>>> origin/main
