@@ -3,6 +3,20 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Proceso
 from .sjf import sjf_simular
 import json
+import re
+
+def _siguiente_numero_proceso():
+    nombres = Proceso.objects.values_list("nombre", flat=True)
+    max_n = 0
+    for nom in nombres:
+        if not nom:
+            continue
+        m = re.fullmatch(r"P(\d+)", str(nom).strip())
+        if m:
+            num = int(m.group(1))
+            if num > max_n:
+                max_n = num
+    return max_n + 1
 
 def ingresar_proceso(request):
     if request.method == "POST":
@@ -23,12 +37,13 @@ def ingresar_proceso(request):
             )
             return redirect("ingresar")
 
+        siguiente = _siguiente_numero_proceso()
+
         for i in range(total):
-            nombre = request.POST.get(f"nombre_{i}")
             llegada = request.POST.get(f"llegada_{i}")
             rafaga = request.POST.get(f"rafaga_{i}")
 
-            if not nombre or not llegada or not rafaga:
+            if not llegada or not rafaga:
                 messages.error(
                     request,
                     f"El proceso {i + 1} tiene campos incompletos."
@@ -37,6 +52,11 @@ def ingresar_proceso(request):
 
             llegada = int(llegada)
             rafaga = int(rafaga)
+
+            nombre = f"P{siguiente}"
+            while Proceso.objects.filter(nombre=nombre).exists():
+                siguiente += 1
+                nombre = f"P{siguiente}"
 
             es = []
             j = 0
@@ -70,10 +90,12 @@ def ingresar_proceso(request):
                 es=es
             )
 
+            siguiente += 1
+
         messages.success(request, "Procesos guardados correctamente.")
         return redirect("lista_procesos")
 
-    return render(request, "ingresar.html")
+    return render(request, "ingresar.html", {"siguiente_proceso": _siguiente_numero_proceso()})
 
 
 def lista_procesos(request):
@@ -100,6 +122,7 @@ def simular(request):
     gantt_js = json.dumps(gantt)
     cpl_js = json.dumps(cpl)
     ces_js = json.dumps(ces)
+
     def nombres_finales(cola):
         if not cola:
             return []
@@ -115,18 +138,12 @@ def simular(request):
 
     return render(request, "resultado.html", {
         "procesos": procesos,
-
-        # Backend
         "gantt": gantt,
         "completados": completados,
         "prom_tep": prom_tep,
         "prom_teje": prom_teje,
-
-        # Vistas finales
         "cpl": cpl_nombres,
         "ces": ces_nombres,
-
-        # Frontend
         "gantt_js": gantt_js,
         "cpl_js": cpl_js,
         "ces_js": ces_js,

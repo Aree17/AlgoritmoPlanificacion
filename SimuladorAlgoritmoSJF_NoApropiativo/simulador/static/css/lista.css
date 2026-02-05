@@ -1,37 +1,48 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700;800&display=swap');
 
 :root{
-  --bg:#F6F8FC;
-  --surface:#FFFFFF;
-  --text:#0F172A;
-  --muted:#475569;
+  --bg: #E9EDF1;
+  --surface: #FFFFFF;
+  --surface-2: #DDE3E8;
+  --card-soft: #D6DEE5;
+  --input-soft: #E3E8ED;
+  --readonly-soft: #CCD6DF;
 
-  --primary:#1E3A8A;
-  --primary-2:#2563EB;
-  --danger:#DC2626;
-  --success:#16A34A;
-  --accent:#F59E0B;
+  --text: #2B2F33;
+  --muted: #5F6B73;
 
-  --border: rgba(15, 23, 42, .12);
-  --radius: 14px;
-  --shadow: 0 10px 28px rgba(2, 6, 23, .08);
+  --primary: #1F2F44;
+  --primary-2: #2F4A66;
+  --accent: #C9C3A9;
+
+  --danger: #B23A3A;
+  --success: #2E6B4C;
+
+  --border: rgba(43,47,51,.18);
+  --border-strong: rgba(43,47,51,.28);
+
+  --radius: 16px;
+  --shadow: 0 18px 42px rgba(31,47,68,.18);
+  --shadow-soft: 0 10px 24px rgba(31,47,68,.14);
 }
 
-*{ box-sizing:border-box; }
+*{ box-sizing: border-box; }
+html, body{ height: 100%; }
+
 body{
   margin: 0;
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   color: var(--text);
+
   background:
-    radial-gradient(900px 520px at 14% 10%, rgba(37, 99, 235, .10), transparent 60%),
-    radial-gradient(900px 520px at 90% 0%, rgba(245, 158, 11, .10), transparent 60%),
+    linear-gradient(180deg, #EFF3F6, #E6EBEF),
     var(--bg);
 }
 
 .container{
   max-width: 1100px;
-  margin: 40px auto;
-  padding: 22px;
+  margin: 44px auto;
+  padding: 26px;
   background: var(--surface);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -39,59 +50,64 @@ body{
 }
 
 h2{
-  margin: 0 0 16px 0;
-  text-align:center;
+  margin: 0 0 18px 0;
+  text-align: center;
   color: var(--primary);
   font-family: Montserrat, Inter, sans-serif;
   font-weight: 800;
+  letter-spacing: .2px;
 }
 
 table{
-  width:100%;
+  width: 100%;
   border-collapse: collapse;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
   border: 1px solid var(--border);
+  background: var(--surface);
 }
 
 thead{
-  background: linear-gradient(180deg, var(--primary), #162E6E);
-  color: white;
+  background: linear-gradient(180deg, var(--primary-2), var(--primary));
+  color: #fff;
 }
 
 th, td{
-  padding: 12px 10px;
+  padding: 13px 10px;
   text-align: center;
   font-size: 14px;
-  border-bottom: 1px solid rgba(15, 23, 42, .08);
+  border-bottom: 1px solid rgba(43,47,51,.10);
 }
 
 tbody tr:nth-child(even){
-  background: #F2F5FB;
+  background: rgba(221, 227, 232, .55);
 }
 
 tbody tr:hover{
-  background: rgba(37, 99, 235, .08);
+  background: rgba(47, 74, 102, .10);
   transition: .15s;
 }
 
+tbody td i{
+  color: rgba(95, 107, 115, .70);
+}
+
 .actions{
-  margin-top: 16px;
-  text-align:center;
+  margin-top: 18px;
+  text-align: center;
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
-/* Botones */
 .btn{
-  padding: 10px 14px;
+  padding: 11px 16px;
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   cursor: pointer;
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 900;
   color: #fff;
   transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
 }
@@ -102,22 +118,22 @@ tbody tr:hover{
 }
 
 .btn-add{
-  background: linear-gradient(180deg, var(--primary-2), #1D4ED8);
-  box-shadow: 0 10px 18px rgba(37,99,235,.18);
+  background: linear-gradient(180deg, var(--primary-2), var(--primary));
+  box-shadow: 0 12px 22px rgba(31,47,68,.28);
 }
 
 .btn-delete{
-  background: linear-gradient(180deg, var(--danger), #B91C1C);
-  box-shadow: 0 10px 18px rgba(220,38,38,.18);
+  background: linear-gradient(180deg, #C24A4A, var(--danger));
+  box-shadow: 0 12px 22px rgba(178,58,58,.22);
 }
 
 .btn-run{
-  background: linear-gradient(180deg, var(--success), #15803D);
-  box-shadow: 0 10px 18px rgba(22,163,74,.18);
+  background: linear-gradient(180deg, #3A7A5A, var(--success));
+  box-shadow: 0 12px 22px rgba(46,107,76,.22);
 }
 
 .fade-in{ animation: fadeIn .55s ease; }
 @keyframes fadeIn{
-  from{ opacity:0; transform: translateY(10px); }
-  to{ opacity:1; transform: translateY(0); }
+  from{ opacity: 0; transform: translateY(10px); }
+  to{ opacity: 1; transform: translateY(0); }
 }

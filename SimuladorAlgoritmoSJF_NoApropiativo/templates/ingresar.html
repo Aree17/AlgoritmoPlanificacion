@@ -18,14 +18,17 @@
     <div class="control-panel">
       <div>
         <label for="numProcesos">Número de procesos</label>
-        <input type="number" id="numProcesos" min="1">
+        <input type="number" id="numProcesos" min="1" placeholder="Ej: 3">
       </div>
       <button type="button" onclick="generarProcesos()">Generar</button>
     </div>
 
     <form method="post">
       {% csrf_token %}
+
       <input type="hidden" name="num_procesos" id="num_procesos">
+      <input type="hidden" id="baseNombre" value="{{ siguiente_proceso|default:1 }}">
+
       <div id="contenedorProcesos"></div>
 
       <div class="form-actions">

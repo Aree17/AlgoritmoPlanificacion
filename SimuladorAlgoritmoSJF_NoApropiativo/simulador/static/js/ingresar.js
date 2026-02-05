@@ -5,6 +5,9 @@ function generarProcesos() {
     const hidden = document.getElementById("num_procesos");
     const cont = document.getElementById("contenedorProcesos");
 
+    const baseInput = document.getElementById("baseNombre");
+    const base = baseInput ? parseInt(baseInput.value) : 1;
+
     cont.innerHTML = "";
     hidden.value = "";
 
@@ -13,12 +16,13 @@ function generarProcesos() {
     hidden.value = n;
 
     for (let i = 0; i < n; i++) {
+        const nombreAuto = `P${base + i}`;
+
         cont.innerHTML += `
         <fieldset class="proc-box">
-            <legend>Proceso ${i + 1}</legend>
 
             <label>Nombre</label>
-            <input name="nombre_${i}" value="P${i + 1}" required>
+            <input name="nombre_${i}" value="${nombreAuto}" required readonly>
 
             <label>Llegada</label>
             <input type="number" name="llegada_${i}" required>
