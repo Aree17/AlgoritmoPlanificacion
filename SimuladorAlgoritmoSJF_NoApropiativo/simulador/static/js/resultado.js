@@ -3,6 +3,7 @@ let timer = null;
 let cesIndex = 0;
 let cesActivos = [];
 let bloqueado = false;
+let cesPendientes =[];
 
 let ultimoFinCPU = 0;
 
@@ -34,10 +35,12 @@ function renderCola(id, lista, bloqueados = []) {
 
     if (id === "cesBox") {
       d.className = "proc proc-es";
+      if (p.finalizado || p.colorRojo) {
+      d.classList.add("bloqueado"); 
+  }
     } else {
       d.className = "proc";
     }
-
     box.appendChild(d);
   });
 }
@@ -108,6 +111,7 @@ function animarMovimiento(nombre, fromId, toId, callback) {
 }
 
 function mostrarPaso() {
+  actualizarCES();
   if (bloqueado || paso >= gantt.length) {
     if (paso >= gantt.length) {
       detener();
@@ -123,6 +127,8 @@ function mostrarPaso() {
   const ini = g[1];
   const fin = g[2];
 
+  actualizarCES(fin);
+
   renderCola("cplBox", cpl[paso] || []);
 
   animarMovimiento(proc, "cplBox", "cpuBox", () => {
@@ -135,10 +141,12 @@ function mostrarPaso() {
     ultimoFinCPU = fin;
 
     if (cesIndex < ces.length && ces[cesIndex].nombre === proc) {
+      const cesProc = ces[cesIndex];
       animarMovimiento(proc, "cpuBox", "cesBox", () => {
-        renderCola("cesBox", ces.slice(0, cesIndex + 1));
-        cesActivos.push(proc);
+         cesProc.enCES = true;
         cesIndex++;
+        renderCola("cesBox", ces.slice(0, cesIndex));
+        cesActivos.push(proc);
         paso++;
         bloqueado = false;
       });
@@ -148,7 +156,21 @@ function mostrarPaso() {
     }
   });
 }
+function actualizarCES(tiempoActual) {
+  for (let i = 0; i < cesIndex; i++) {
+    const p = ces[i];
 
+    if (!p.finalizado && p.enCES) {
+      if (tiempoActual >= p.retorno) {
+        p.finalizado = true;
+        p.colorRojo = true;
+        p.enCES = false;
+      }
+    }
+  }
+
+  renderCola("cesBox", ces.slice(0, cesIndex));
+}
 function siguiente() {
   mostrarPaso();
 }
@@ -172,10 +194,14 @@ function reiniciar() {
   cesIndex = 0;
   cesActivos = [];
   ultimoFinCPU = 0;
+  ces.forEach(p => {
+    p.finalizado = false;
+    p.colorRojo = false;
+    p.enCES = false;
+  });
 
   document.getElementById("cpuBox").innerHTML = "";
   document.getElementById("cplBox").innerHTML = "";
   document.getElementById("cesBox").innerHTML = "";
   document.getElementById("final").style.display = "none";
 }
-

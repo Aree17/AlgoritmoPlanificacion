@@ -160,6 +160,10 @@
   from{ opacity:0; transform: translateY(8px); }
   to{ opacity:1; transform: translateY(0); }
 }
+.proc-es.bloqueado {
+    background-color: #f44336;
+    color: white;
+}
 .controls{
   text-align:center;
   margin: 18px 0 0 0;
